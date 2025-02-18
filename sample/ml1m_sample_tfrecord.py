@@ -8,6 +8,7 @@ class Ml1mTFRecordSample:
 
     # 定义一个函数来将样本写入 TFRecord  
     def write_tfrecord(self,sample_x, sample_y, output_path):  
+        print(output_path)
         with tf.io.TFRecordWriter(output_path) as writer:  
             for user_id,item_id,timestamp,title,genres, gender,age,occupation,zip_,itemid_seq,itemid_seq_len,rating   \
                 in zip(sample_x["user_id"],sample_x["item_id"],sample_x["timestamp"],sample_x["title"],sample_x["genres"] \

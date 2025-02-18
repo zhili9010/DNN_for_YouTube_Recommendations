@@ -6,6 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from keras import layers
 from feature import feature_processing
+import os
 
 
 class SaveModelSignatures:
@@ -34,7 +35,9 @@ class SaveModelSignatures:
         def serve_predictions(user_id,movie_id,rated_movies_lastN,genres,zip_id ,tags):  
             return model([user_id,movie_id,rated_movies_lastN, genres, zip_id, tags])
 
-
+        features = model.layers[-3].output  
+        intermediate_model = tf.keras.Model(inputs=model.input, outputs=features)  
+        
         # 定义签名函数：提取特征  
         @tf.function(input_signature=[  
             tf.TensorSpec(shape=[None, parsed_args["userid_input_dim"]], dtype=tf.float32, name='user_id'),  
@@ -47,8 +50,6 @@ class SaveModelSignatures:
         ])        
 
         def extract_features(user_id,movie_id,rated_movies_lastN,genres,zip_id ,tags):  
-            features = model.layers[-3].output  
-            intermediate_model = tf.keras.Model(inputs=model.input, outputs=features)  
             return intermediate_model([user_id,movie_id,rated_movies_lastN, genres, zip_id, tags])  
 
 
@@ -60,4 +61,6 @@ class SaveModelSignatures:
         }  
         
         # 保存模型，包括多个签名  
+        if not os.path.exists(export_path):
+            os.makedirs(export_path)
         tf.saved_model.save(model, export_path, signatures=signatures)  

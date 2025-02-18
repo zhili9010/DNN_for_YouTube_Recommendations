@@ -1,5 +1,5 @@
-import sys
-sys.path.append('d://the-recommender/DNN_for_YouTube_Recommendations')
+# import sys
+# sys.path.append('d://the-recommender/DNN_for_YouTube_Recommendations')
 
 import argparse
 from core.trainner.trainner_cpu import TrainnerCPU
@@ -12,7 +12,7 @@ def build_argparser(parser):
 
     #dateset配置
     parser.add_argument('--data_path', type=str, help='--export_path',
-                        default='d://the-recommender/DNN_for_YouTube_Recommendations/datasets/ml-1m/') 
+                        default='DNN_for_YouTube_Recommendations/datasets/ml-1m/') 
     parser.add_argument('--users_file', type=str, help='--users_file', default='users.dat') 
     parser.add_argument('--ratings_file', type=str, help='--ratings_file', default='ratings.dat') 
     parser.add_argument('--movies_file', type=str, help='--movies_file', default='movies.dat') 
@@ -22,14 +22,14 @@ def build_argparser(parser):
 
 
     #样本配置
-    parser.add_argument('--sample_output_file', type=bool, help='--sample_output_path',
-                         default='d://the-recommender/DNN_for_YouTube_Recommendations/sample/__TFRecord/train.tfrecord') 
+    parser.add_argument('--sample_output_file', type=str, help='--sample_output_path',
+                         default='DNN_for_YouTube_Recommendations/sample/__TFRecord/train.tfrecord') 
 
     #模型保存配置
     parser.add_argument('--export_path', type=str, help='--export_path',
-                        default='d://the-recommender/DNN_for_YouTube_Recommendations/SAVEDMODELS/savedmodel/default_signature_with_multiple_input_output')  
+                        default='DNN_for_YouTube_Recommendations/savedmodel/default_signature_with_multiple_input_output')  
     parser.add_argument('--export_path_multi', type=str,  help='--export_path_multi',
-                        default='d://the-recommender/DNN_for_YouTube_Recommendations/SAVEDMODELS/savedmodel/multi_signature_with_multiple_input_output') 
+                        default='DNN_for_YouTube_Recommendations/savedmodel/multi_signature_with_multiple_input_output') 
     #特征hash等配置 
     parser.add_argument('--userid_hash_nums', type=int,  help='--userid_hash_nums', default=10000)  
     parser.add_argument('--itemid_hash_nums', type=int,  help='--itemid_hash_nums', default=10000)  
@@ -121,7 +121,7 @@ def main():
 
     ## 1.初始化参数
     trainner = TrainnerCPU()
-    parser = trainner.build_argparser(argparse.ArgumentParser())
+    parser = build_argparser(argparse.ArgumentParser())
     parsed_args = parse_args(parser)
 
     ## 2.加载数据集
@@ -139,7 +139,7 @@ def main():
     model = trainner.train_loop(train_dataset, parsed_args)
 
     ## 5.保存模型 - 自定义签名
-    SaveModelSignatures().save_model_signatures(model, parsed_args["export_path_multi"])
+    SaveModelSignatures().save_model_signatures(model, parsed_args, parsed_args["export_path_multi"])
 
     ## 6.模型推理验证
     #特征处理, 构造输入tensor
